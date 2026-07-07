@@ -566,6 +566,12 @@
   <p>Hình ảnh & âm thanh: Wikimedia Commons</p>
 </footer>
 
+<img id="clickPopupImg" src="images%20(1).jpg" alt=""
+  style="position:fixed;width:140px;height:auto;pointer-events:none;z-index:9999;
+         border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);
+         opacity:0;transform:scale(.7);
+         transition:opacity .18s ease, transform .18s ease;">
+
 <script>
   const places = [
     { img:"n%C3%BAi%20phu%20s%C4%A9.jpg", title:"Núi Phú Sĩ",
@@ -587,6 +593,37 @@
   }
   document.querySelectorAll('.overlay').forEach(ov=>{
     ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('active'); });
+  });
+
+  // âm thanh + ảnh khi nhấp chuột
+  const clickSound = new Audio('gabbe-suii-by-cristiano-ronaldo-123253.mp3');
+  const popupImg = document.getElementById('clickPopupImg');
+  let popupTimer = null;
+
+  document.addEventListener('click', (e) => {
+    // phát âm thanh
+    clickSound.currentTime = 0;
+    clickSound.play().catch(()=>{});
+
+    // đặt vị trí ảnh gần con trỏ chuột (căn giữa theo điểm nhấp)
+    const w = popupImg.offsetWidth || 140;
+    let left = e.clientX - w / 2;
+    let top = e.clientY - w / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+    top = Math.max(8, Math.min(top, window.innerHeight - w - 8));
+    popupImg.style.left = left + 'px';
+    popupImg.style.top = top + 'px';
+
+    // hiện ảnh
+    popupImg.style.opacity = '1';
+    popupImg.style.transform = 'scale(1)';
+
+    // tự ẩn sau 1.5 giây
+    clearTimeout(popupTimer);
+    popupTimer = setTimeout(() => {
+      popupImg.style.opacity = '0';
+      popupImg.style.transform = 'scale(.7)';
+    }, 1500);
   });
 
   // scroll reveal
